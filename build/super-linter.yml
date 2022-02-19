@@ -1,0 +1,23 @@
+trigger:
+- 'none'
+
+jobs:
+  - job: lint
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: |
+        docker run \
+          -e RUN_LOCAL=true \
+          -e VALIDATE_MARKDOWN=true \
+          -e $(System.DefaultWorkingDirectory)/.markdown-lint.yml \
+          -e VALIDATE_NATURAL_LANGUAGE=true \
+          -e LOG_FILE=$(Build.ArtifactStagingDirectory)/super-linter.log \
+          -v $(System.DefaultWorkingDirectory):/tmp/lint github/super-linter
+      displayName: 'Run GitHub Super-Linter'
+    - script: ls -al $SYSTEM_DEFAULTWORKINGDIRECTORY
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/super-linter.log'
+        ArtifactName: 'super-linter-log'
+        publishLocation: 'Container'
