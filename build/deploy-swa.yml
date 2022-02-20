@@ -10,12 +10,17 @@ steps:
   - task: CmdLine@2
     inputs:
       script: |
-        pip install mkdocs-material
-        pip install mkdocs
+        pip install -r requirements.txt
         mkdocs build
-        cp docs/staticwebapp.config.json site
         ls site
-        
+
+  - task: CmdLine@2
+    inputs:
+      script: |
+        ls
+        cp staticwebapp.config.json site/
+        ls site
+
   - task: AzureStaticWebApp@0
     inputs:
       app_location: 'site'
